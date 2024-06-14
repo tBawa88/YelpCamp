@@ -12,8 +12,14 @@ const app = express();
 
 
 dbConnect().then().catch(() => console.log("db connection error"));
-app.use(morgan(':method :url status- :status :response-time ms - :res[content-length]'))
+app.use(morgan(':method :url status- :status :response-time ms - :res[content-length]')) //logging request with morgan
 app.use(express.json());
+app.use((req, res, next) => {   //setting CORS headers
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    next();
+});
 
 app.get('/', async (req, res) => {
     res.send("<h1>Hello world</h1>");
@@ -90,7 +96,11 @@ app.delete('/camps/:id', async (req, res, next) => {
 
 app.use((err, req, res, next) => {
     console.log("Oops, Error wile fetching the data ->", err);
-    res.status(500).json({ success: false, message: 'Server error', error: err })
+    if (res.headersSent) {
+        return next(err); // Delegate to the default error-handling mechanism
+    }
+
+    res.status(500).json({ success: false, message: 'Server error', error: err.message });
 })
 
 
