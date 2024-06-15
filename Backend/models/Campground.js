@@ -15,13 +15,13 @@ const campgroundSchema = new Schema({
     },
     location: {
         type: String,
-        required: [true, "Locatoin is required"]
+        required: [true, "Location is required"]
     },
     description: {
         type: String,
-        required: [true, "Desription is required"]
+        required: [true, "Description is required"]
     }
 })
 
-const CampgroundModel = mongoose.model("Campgroud", campgroundSchema);
+const CampgroundModel = mongoose.model("Campground", campgroundSchema);
 export default CampgroundModel;

@@ -1,6 +1,6 @@
 import CampgroundCard from "./CampgroundCard";
 
-const CampgroundsIndex = ({ camps }) => {
+const CampgroundsList = ({ camps }) => {
     return (
         <ul>
             { camps.map(camp => <CampgroundCard camp={ camp } key={ camp._id } />) }
@@ -8,4 +8,4 @@ const CampgroundsIndex = ({ camps }) => {
     )
 }
 
-export default CampgroundsIndex;
+export default CampgroundsList;

@@ -3,7 +3,10 @@ import dotenv from 'dotenv'
 import dbConnect from './lib/dbConnect.js'
 import CustomError from "./utils/CustomError.js";
 import CampgroundModel from "./models/Campground.js";
+import ReviewModel from "./models/Review.js";
 import validateCamp from "./validation/validateCamp.js";
+import validateReview from "./validation/validateReview.js";
+import validateCampForReview from "./validation/validateCampForReview.js";
 import morgan from "morgan";
 
 dotenv.config();
@@ -92,6 +95,42 @@ app.delete('/camps/:id', async (req, res, next) => {
         next(new CustomError('Error deleting campground', 500))
     }
 })
+
+
+//REVIEW apis ==============================
+
+//fetch all reviews related to a single camp
+app.get('/reviews/:id', validateCampForReview, async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const reviews = await ReviewModel.find({ campgroundId: id });
+        if (reviews?.length > 0) {
+            res.status(200).json({ success: true, message: "Successfully fetched all review for this campground", reviews })
+        } else {
+            res.status(400).json({ success: false, message: "No reviews exist for this campground", reviews: null })
+        }
+    } catch (error) {
+        console.log("Error fetching reviews", error)
+        next(new CustomError('Error fetching review from DB', 500))
+    }
+})
+
+
+
+
+//make a new review
+app.post('/reviews/:id', validateReview, validateCampForReview, async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const newReview = new ReviewModel({ ...req.body, campgroundId: id });
+        await newReview.save();
+        return res.status(200).json({ success: true, message: "Review created successfully", review: newReview })
+    } catch (error) {
+        console.log("Error while creating a rweview", error)
+        next(new CustomError('Error while creating a new review', 500))
+    }
+})
+
 
 
 

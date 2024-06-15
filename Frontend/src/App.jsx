@@ -11,8 +11,8 @@ import {
 
 import { loader as loadAllCamps } from './pages/Campgrounds'
 import { loader as loadCampDetails } from './pages/CampgroundDetails'
+import { action as deleteCamp } from './pages/CampgroundDetails'
 import { action as updateCamp } from './components/CampgroundForm'
-import { action as deleteCamp } from './components/Campground'
 
 const router = createBrowserRouter([
   {

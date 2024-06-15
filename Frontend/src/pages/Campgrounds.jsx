@@ -1,6 +1,6 @@
 import { useLoaderData, json, Await, defer } from "react-router-dom";
 import { Suspense } from "react";
-import CampgroundsIndex from "../components/CampgroundsIndex";
+import CampgroundsList from "../components/CampgroundsList";
 
 export const Campgrounds = () => {
     const { camps } = useLoaderData();
@@ -8,7 +8,7 @@ export const Campgrounds = () => {
     return <>
         <Suspense fallback={ <p>Loading campgrounds ...</p> }>
             <Await resolve={ camps } >
-                { (camps) => <CampgroundsIndex camps={ camps } /> }
+                { (camps) => <CampgroundsList camps={ camps } /> }
             </Await>
         </Suspense>
     </>

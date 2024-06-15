@@ -1,15 +1,15 @@
 import mongoose, { Schema } from "mongoose";
 
 const reviewSchema = new Schema({
-    author: {
-        type: Schema.Types.ObjectId,
-        ref: 'User'
-    },
     content: {
         type: String,
     },
     rating: {
-        type: number,
+        type: Number,
+    },
+    campgroundId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Campground'
     }
 })
 
