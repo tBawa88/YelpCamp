@@ -6,7 +6,7 @@ const validateCamp = (req, res, next) => {
     if (!result.success) {
         const errorsArray = result.error.errors.map(err => err.message);
         console.log("Result of validating the new camp ->", errorsArray);
-        return res.status(404).json({ success: false, message: "validation failed", erros: errorsArray });
+        return res.status(404).json({ success: false, message: "Validation failed", erros: errorsArray });
     }
     next();
 }

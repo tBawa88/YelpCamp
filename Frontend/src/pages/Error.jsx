@@ -1,11 +1,14 @@
 import { useRouteError, Link } from 'react-router-dom'
+import Navbar from '../components/Navbar';
 
 export const ErrorPage = () => {
-    const error = useRouteError();
-    console.log("Inside error page ->", error)
+    const data = useRouteError();
+    const message = data.error?.message;
+
 
     return <>
-        <h1>Error while finding the Resource or Page</h1>
+        <Navbar />
+        <h1>{ message ? message : "Error fetching the resource or page" } :|</h1>
         <Link to='/'>Go back to homepage</Link>
     </>
 

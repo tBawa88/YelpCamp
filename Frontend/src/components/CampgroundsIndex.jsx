@@ -1,11 +1,9 @@
-import { Link } from "react-router-dom"
+import CampgroundCard from "./CampgroundCard";
 
 const CampgroundsIndex = ({ camps }) => {
     return (
         <ul>
-            { camps.map(camp => (
-                <li key={ camp._id }><Link to={ `/campgrounds/${camp._id}` }>{ camp.title }</Link></li>
-            )) }
+            { camps.map(camp => <CampgroundCard camp={ camp } key={ camp._id } />) }
         </ul>
     )
 }

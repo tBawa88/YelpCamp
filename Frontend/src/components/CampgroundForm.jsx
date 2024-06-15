@@ -1,5 +1,5 @@
 import { Form, json, redirect, useNavigate, useNavigation } from "react-router-dom";
-
+import Input from "./Input";
 const CampgroundForm = ({ method, camp }) => {
     const naviagte = useNavigate();
     const navigation = useNavigation();
@@ -11,36 +11,59 @@ const CampgroundForm = ({ method, camp }) => {
     }
 
     return <>
-        <Form method={ method }>
-            <p>
-                <label htmlFor="title">Title</label>
-                <input id="title" type="text" name="title" defaultValue={ camp ? camp.title : '' } required />
-            </p>
-            <p>
-                <label htmlFor="image">Image</label>
-                <input id="image" type="url" name="image" defaultValue={ camp ? camp.image : '' } required />
-            </p>
-            <p>
-                <label htmlFor="image">Location</label>
-                <input id="location" type="text" name="location" defaultValue={ camp ? camp.location : '' } required />
-            </p>
-            <p>
-                <label htmlFor="price">Price</label>
-                <input id="price" type="number" name="price" defaultValue={ camp ? camp.price : '' } required />
-            </p>
-            <p>
-                <label htmlFor="description">Description</label>
-                <textarea id="description" name="description" rows="5" defaultValue={ camp ? camp.description : '' } required />
-            </p>
-            <div >
-                <button type="button" onClick={ cancelHandler } disabled={ isSubmitting }>
-                    Cancel
-                </button>
-                <button type="submit" disabled={ isSubmitting }>
-                    { isSubmitting ? 'Submitting ..' : 'Save' }
-                </button>
+        <div className="row">
+            <h1 className="text-center mb-4">{ camp ? `Edit '${camp.title}'` : 'New Campground' }</h1>
+            <div className="col-6 offset-3">
+                <Form method={ method }>
+
+                    <Input label='Title'
+                        type="text"
+                        name="title"
+                        defaultValue={ camp ? camp.title : '' }
+                        required />
+
+                    <Input label='Image'
+                        type="text"
+                        name="image"
+                        defaultValue={ camp ? camp.image : '' }
+                        required />
+
+                    <Input label='Location'
+                        type="text"
+                        name="location"
+                        defaultValue={ camp ? camp.location : '' }
+                        required />
+
+                    <Input label='Price'
+                        type="number"
+                        name="price"
+                        defaultValue={ camp ? camp.price : 0 }
+                        required />
+
+                    <Input label='Description'
+                        name="description"
+                        defaultValue={ camp ? camp.description : '' }
+                        isTextArea
+                        required />
+
+                    <button type="button"
+                        onClick={ cancelHandler }
+                        disabled={ isSubmitting }
+                        className="btn btn-primary me-3"
+                    >
+                        Cancel
+                    </button>
+                    <button type="submit"
+                        className="btn btn-success"
+                        disabled={ isSubmitting }
+                    >
+                        { isSubmitting ? 'Submitting ..' : 'Save' }
+                    </button>
+
+                </Form>
             </div>
-        </Form>
+        </div>
+
     </>
 }
 export default CampgroundForm;

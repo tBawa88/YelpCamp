@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from 'dotenv'
 import dbConnect from './lib/dbConnect.js'
+import CustomError from "./utils/CustomError.js";
 import CampgroundModel from "./models/Campground.js";
 import validateCamp from "./validation/validateCamp.js";
 import morgan from "morgan";
@@ -12,7 +13,7 @@ const app = express();
 
 
 dbConnect().then().catch(() => console.log("db connection error"));
-app.use(morgan(':method :url status- :status :response-time ms - :res[content-length]')) //logging request with morgan
+app.use(morgan(':method :url status- :status :response-time ms - :res[content-length]')) //logging requests with morgan
 app.use(express.json());
 app.use((req, res, next) => {   //setting CORS headers
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -31,7 +32,7 @@ app.get('/camps', async (req, res, next) => {
         const camps = await CampgroundModel.find({});
         res.status(200).json({ success: true, message: "Fetched all camps", camps: camps })
     } catch (error) {
-        next(error);
+        next(new CustomError('Error fetching data from server', 500))
     }
 })
 
@@ -39,12 +40,13 @@ app.get('/camps', async (req, res, next) => {
 app.get('/camps/:id', async (req, res, next) => {
     try {
         const exisitingCamp = await CampgroundModel.findById(req.params.id);
-        if (!exisitingCamp) {
+        if (exisitingCamp) {
+            res.status(200).json({ success: true, message: "Campground fetching successful", camp: exisitingCamp })
+        } else {
             res.status(404).json({ success: false, message: "Campground does not exist", camp: null })
         }
-        res.status(200).json({ success: true, message: "Campground fetching successful", camp: exisitingCamp })
     } catch (error) {
-        next(error);
+        next(new CustomError('Error fetching data from server', 500))
     }
 })
 
@@ -55,7 +57,7 @@ app.post('/camps', validateCamp, async (req, res, next) => {
         await newCamp.save();
         res.status(200).json({ success: true, message: "Successfully created a new camp", camp: newCamp })
     } catch (error) {
-        res.status(500).json({ success: false, message: "Server error creating a new camp", camp: null })
+        next(new CustomError('Error saving the campground data', 500))
     }
 })
 
@@ -70,37 +72,36 @@ app.patch('/camps/:id', validateCamp, async (req, res, next) => {
         if (updatedCamp) {
             res.status(200).json({ success: true, message: "Successfully updated the camp", camp: updatedCamp })
         } else {
-            res.status(404).json({ success: false, message: "camp does not exists", camp: null })
+            res.status(404).json({ success: false, message: "Camp does not exist", camp: null })
         }
     } catch (error) {
-        next(error);
+        next(new CustomError('Error updating campground data', 500))
     }
 })
 
 //delete single camp
 app.delete('/camps/:id', async (req, res, next) => {
     try {
-        const data = await CampgroundModel.findByIdAndDelete(req.params.id);
-        if (data) {
-            res.status(200).json({ success: true, message: "Successfully deleted the camp", camp: data })
+        const deletedCamp = await CampgroundModel.findByIdAndDelete(req.params.id);
+        if (deletedCamp) {
+            res.status(200).json({ success: true, message: "Successfully deleted the camp", camp: deletedCamp })
         } else {
             res.status(404).json({ success: false, message: "Camp does not exist", camp: null })
         }
     } catch (error) {
-        next(error);
+        next(new CustomError('Error deleting campground', 500))
     }
 })
 
 
 
-
+//error handler
 app.use((err, req, res, next) => {
-    console.log("Oops, Error wile fetching the data ->", err);
-    if (res.headersSent) {
-        return next(err); // Delegate to the default error-handling mechanism
-    }
-
-    res.status(500).json({ success: false, message: 'Server error', error: err.message });
+    const { message, status } = err;
+    res.status(status || 500).json({
+        success: false, message: message || "Internal server error",
+        error: err.message
+    });
 })
 
 
