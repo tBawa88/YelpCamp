@@ -10,7 +10,7 @@ import {
 } from './pages/index'
 
 import { loader as loadAllCamps } from './pages/Campgrounds'
-import { loader as loadCampDetails } from './pages/CampgroundDetails'
+import { loader as loadCampAndReviews } from './pages/CampgroundDetails'
 import { action as deleteCamp } from './pages/CampgroundDetails'
 import { action as updateCamp } from './components/CampgroundForm'
 
@@ -23,7 +23,7 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <Campgrounds />, loader: loadAllCamps, },
           {
-            path: ':id', loader: loadCampDetails, id: 'campDetail',
+            path: ':id', loader: loadCampAndReviews, id: 'campDetail',
             children: [
               { index: true, element: <CampgroundDetails />, action: deleteCamp },
               { path: 'edit', element: <EditCampground />, action: updateCamp }

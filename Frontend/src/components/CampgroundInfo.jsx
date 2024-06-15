@@ -1,7 +1,8 @@
 import { Link, useSubmit } from "react-router-dom";
+import ReviewList from "./ReviewList";
+import ReviewForm from "./ReviewForm";
 
-
-const CampgroundInfo = ({ camp }) => {
+const CampgroundInfo = ({ camp, reviews }) => {
     const submit = useSubmit();
 
     function handleDelete() {
@@ -14,7 +15,7 @@ const CampgroundInfo = ({ camp }) => {
 
     return <>
         <div className="row">
-            <div className="col-md-6 offset-3">
+            <div className="col-md-6 ">
                 <div className="card mb-5">
                     <img src={ camp.image } alt="Image of a campground" />
                     <div className="card-body">
@@ -35,12 +36,15 @@ const CampgroundInfo = ({ camp }) => {
                             className="btn btn-danger"
                             onClick={ handleDelete }
                         >Delete</button>
-
                     </div>
                     <div className="card-footer text-body-secondary">
                         2 days ago
                     </div>
                 </div>
+            </div>
+            <div className="col-md-6">
+                <ReviewForm />
+                <ReviewList reviews={ reviews } />
             </div>
         </div>
     </>

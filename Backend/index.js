@@ -56,6 +56,7 @@ app.get('/camps/:id', async (req, res, next) => {
 //create new camp
 app.post('/camps', validateCamp, async (req, res, next) => {
     try {
+        console.log("req body", req.body)
         const newCamp = new CampgroundModel(req.body);
         await newCamp.save();
         res.status(200).json({ success: true, message: "Successfully created a new camp", camp: newCamp })
@@ -99,26 +100,25 @@ app.delete('/camps/:id', async (req, res, next) => {
 
 //REVIEW apis ==============================
 
-//fetch all reviews related to a single camp
+//fetch all reviews related to a single camp (:id - refers to the campground._id)
 app.get('/reviews/:id', validateCampForReview, async (req, res, next) => {
     try {
         const { id } = req.params;
         const reviews = await ReviewModel.find({ campgroundId: id });
-        if (reviews?.length > 0) {
-            res.status(200).json({ success: true, message: "Successfully fetched all review for this campground", reviews })
-        } else {
-            res.status(400).json({ success: false, message: "No reviews exist for this campground", reviews: null })
-        }
+        //simply return the empty array, empty or not?
+        res.status(200).json({ success: true, message: "Successfully fetched all review for this campground", reviews })
+        // if (reviews?.length > 0) {
+        //     res.status(200).json({ success: true, message: "Successfully fetched all review for this campground", reviews })
+        // } else {
+        //     res.status(400).json({ success: false, message: "No reviews exist for this campground", reviews })
+        // }
     } catch (error) {
         console.log("Error fetching reviews", error)
         next(new CustomError('Error fetching review from DB', 500))
     }
 })
 
-
-
-
-//make a new review
+//create a new review
 app.post('/reviews/:id', validateReview, validateCampForReview, async (req, res, next) => {
     try {
         const { id } = req.params;
@@ -131,7 +131,20 @@ app.post('/reviews/:id', validateReview, validateCampForReview, async (req, res,
     }
 })
 
-
+//delete Review
+app.delete('/reviews/:id', async (req, res, next) => {
+    try {
+        const { reviewId } = req.body;
+        const deletedReview = await ReviewModel.findByIdAndDelete(reviewId);
+        if (deletedReview)
+            return res.status(200).json({ success: true, message: "Review deleted successfully", review: deletedReview })
+        else
+            return res.status(400).json({ success: false, message: "Review or Campground donot exist", review: null })
+    } catch (error) {
+        console.log("Error while making delete mongoose request", error)
+        next(new CustomError('Error while deleting review', 500))
+    }
+})
 
 
 //error handler
