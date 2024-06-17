@@ -20,6 +20,11 @@ const campgroundSchema = new Schema({
     description: {
         type: String,
         required: [true, "Description is required"]
+    },
+    authorId: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: [true, "Every camp must have an author"]
     }
 })
 

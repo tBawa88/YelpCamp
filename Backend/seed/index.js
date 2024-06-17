@@ -2,10 +2,10 @@ import { places, descriptors } from "./seedHelpers.js";
 import { cities } from "./cities.js";
 import dbConnect from "../lib/dbConnect.js";
 import CampgroundModel from "../models/Campground.js";
+
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
 import dotenv from 'dotenv';
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 dotenv.config({ path: resolve(__dirname, '../.env') }); //just to get access to .env file which is in the root dir

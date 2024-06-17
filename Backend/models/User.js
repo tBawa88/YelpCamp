@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 
+//for now only storing username and password
 const userSchema = new Schema({
     username: {
         type: String,
@@ -7,13 +8,13 @@ const userSchema = new Schema({
         trim: true,
         unique: true
     },
-    email: {
-        type: String,
-        required: [true, "Email is required"],
-        unique: true,
-        match: [/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i
-            , 'Please use a valid email address']
-    },
+    // email: {
+    //     type: String,
+    //     required: [true, "Email is required"],
+    //     unique: true,
+    //     match: [/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i
+    //         , 'Please use a valid email address']
+    // },
     password: {
         type: String,
         required: [true, 'Password is required'],

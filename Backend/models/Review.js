@@ -10,6 +10,10 @@ const reviewSchema = new Schema({
     campgroundId: {
         type: Schema.Types.ObjectId,
         ref: 'Campground'
+    },
+    authorId: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     }
 })
 

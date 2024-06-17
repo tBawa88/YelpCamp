@@ -6,17 +6,22 @@ import {
   CampgroundDetails,
   NewCampground,
   EditCampground,
-  ErrorPage
+  ErrorPage,
+  AuthenticationPage
 } from './pages/index'
 
 import { loader as loadAllCamps } from './pages/Campgrounds'
 import { loader as loadCampAndReviews } from './pages/CampgroundDetails'
 import { action as deleteCamp } from './pages/CampgroundDetails'
 import { action as updateCamp } from './components/CampgroundForm'
+import { tokenLoader } from './utils/auth'
 
 const router = createBrowserRouter([
   {
-    path: '/', element: <RootLayout />, errorElement: <ErrorPage />,
+    path: '/', element: <RootLayout />,
+    errorElement: <ErrorPage />,
+    loader: tokenLoader,
+    id: 'root',
     children: [
       {
         path: 'campgrounds',
@@ -32,6 +37,7 @@ const router = createBrowserRouter([
           { path: 'new', element: <NewCampground />, action: updateCamp }
         ]
       },
+      { path: 'auth', element: <AuthenticationPage /> }
     ]
   },
 ]);

@@ -1,6 +1,6 @@
 //Find out if the campground that this review is being sent to, even exists
 import CampgroundModel from "../models/Campground.js"
-import CustomError from "../utils/CustomError.js"
+import { ServerError } from "../utils/ErrorClasses.js";
 
 const validateCampForReview = async (req, res, next) => {
     try {
@@ -11,7 +11,7 @@ const validateCampForReview = async (req, res, next) => {
         }
         next();
     } catch (error) {
-        next(new CustomError('Error while finding camp related to Review', 500))
+        next(new ServerError('Error while finding camp related to Review'))
     }
 }
 
