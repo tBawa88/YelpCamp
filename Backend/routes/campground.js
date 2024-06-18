@@ -18,29 +18,35 @@ router.get('/', async (req, res, next) => {
     }
 })
 
-//get single camp - 
-//TODO : inside the repsonse, return the _id of current logged in user
+/**
+ * Along with the camp details, we're also including _id of current logged in user 
+ * This info is used by frontend to display some conditional content (like delete and edit buttons)
+ * The user can only perform those actions if userId and the author ID of campground matches
+ */
 router.get('/:id', attachToken, async (req, res, next) => {
     try {
         const exisitingCamp = await CampgroundModel.findById(req.params.id);
         if (!exisitingCamp) {
             return next(new NotFound('Campground not found'))
         }
-        res.status(200).json({ success: true, message: "Campground fetching successful", camp: exisitingCamp, token: req.token })
+        res.status(200).json({ success: true, message: "Campground fetching successful", camp: exisitingCamp, token: req.token || 'NULL' })
     } catch (error) {
         next(new ServerError('Error fetching data from server'))
     }
 })
 
-//this MW is also appending the req object with a token if user is logged in
-//this MW is enforcing userlogin before doing any patching or posting
-//This is okay for backend auth
+/**
+ * This MW is enforcing user login and 
+ * Also attaching token to the req object if it is included in the headers
+ * 
+ */
 router.use(isLoggedIn) //---------------------------------------------------------------------
 
-//create new camp
 router.post('/', validateCamp, async (req, res, next) => {
     try {
-        const newCamp = new CampgroundModel(req.body);
+        const campData = { ...req.body, authorId: req.token.userId };
+        console.log("Camp data to ", campData)
+        const newCamp = new CampgroundModel(campData);
         await newCamp.save();
         res.status(200).json({ success: true, message: "Successfully created a new camp", camp: newCamp, token: req.token })
     } catch (error) {

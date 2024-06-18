@@ -1,8 +1,9 @@
 import { Router } from "express";
 import validateReview from "../middleware/validateReview.js";
 import validateCampForReview from "../middleware/validateCampForReview.js";
-import { NotFound, ServerError } from "../utils/ErrorClasses.js";
+import { ServerError } from "../utils/ErrorClasses.js";
 import ReviewModel from "../models/Review.js";
+import isLoggedIn from "../middleware/isLoggedIn.js";
 const router = Router();
 
 
@@ -17,11 +18,16 @@ router.get('/:id', validateCampForReview, async (req, res, next) => {
     }
 })
 
+
+//user must be logged in to post or delete reviews
+router.use(isLoggedIn);
+
 //create a new review
 router.post('/:id', validateReview, validateCampForReview, async (req, res, next) => {
     try {
         const { id } = req.params;
-        const newReview = new ReviewModel({ ...req.body, campgroundId: id });
+        const { userId } = req.token;
+        const newReview = new ReviewModel({ ...req.body, campgroundId: id, authorId: userId });
         await newReview.save();
         return res.status(200).json({ success: true, message: "Review created successfully", review: newReview })
     } catch (error) {
@@ -29,15 +35,6 @@ router.post('/:id', validateReview, validateCampForReview, async (req, res, next
         next(new ServerError('Error while creating a new review'))
     }
 })
-
-//edit review
-// router.patch('/:id', validateReview, validateCampForReview, async (req, res, next) => {
-//     try {
-//         const 
-//     } catch (error) {
-
-//     }
-// })
 
 //delete Review
 router.delete('/:id', async (req, res, next) => {

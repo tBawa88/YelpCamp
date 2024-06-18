@@ -14,7 +14,7 @@ const campgroundValidation = z.object({
     description: z.string()
         .min(3, "Description should be atleast 3 characters")
         .max(500, "Description cannot be more than 500 characters"),
-    authorId: z.string()
+
 })
 
 export default campgroundValidation;

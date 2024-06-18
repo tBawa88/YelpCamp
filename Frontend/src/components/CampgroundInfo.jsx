@@ -1,10 +1,12 @@
-import { Link, useSubmit } from "react-router-dom";
+import { Link, useRouteLoaderData, useSubmit } from "react-router-dom";
 import ReviewList from "./ReviewList";
 import ReviewForm from "./ReviewForm";
 
-const CampgroundInfo = ({ camp, reviews }) => {
+const CampgroundInfo = ({ camp, }) => {
+    const token = useRouteLoaderData('root');
+    const { userId } = useRouteLoaderData('campDetail')
     const submit = useSubmit();
-
+    console.log("Inside camp page, ID of current user => ", userId)
     function handleDelete() {
         const proceed = window.confirm("Are you sure you want to delete this Campground ?")
         if (proceed) {
@@ -26,7 +28,7 @@ const CampgroundInfo = ({ camp, reviews }) => {
                         <li className="list-group-item">${ camp.price }</li>
                         <li className="list-group-item text-muted">{ camp.location }</li>
                     </ul>
-                    <div className="card-body">
+                    { (userId === camp.authorId) && <div className="card-body">
 
                         <Link
                             to={ `/campgrounds/${camp._id}/edit` }
@@ -36,15 +38,15 @@ const CampgroundInfo = ({ camp, reviews }) => {
                             className="btn btn-danger"
                             onClick={ handleDelete }
                         >Delete</button>
-                    </div>
+                    </div> }
                     <div className="card-footer text-body-secondary">
                         2 days ago
                     </div>
                 </div>
             </div>
             <div className="col-md-6">
-                <ReviewForm />
-                <ReviewList reviews={ reviews } />
+                { (token && token !== 'EXPIRED') && <ReviewForm /> }
+                <ReviewList />
             </div>
         </div>
     </>

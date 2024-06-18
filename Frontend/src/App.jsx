@@ -14,7 +14,9 @@ import { loader as loadAllCamps } from './pages/Campgrounds'
 import { loader as loadCampAndReviews } from './pages/CampgroundDetails'
 import { action as deleteCamp } from './pages/CampgroundDetails'
 import { action as updateCamp } from './components/CampgroundForm'
-import { tokenLoader } from './utils/auth'
+import { action as authAction } from './pages/Authentication'
+import { action as logoutAction } from './pages/Logout'
+import { tokenLoader, checkAuthLoader } from './utils/auth'
 
 const router = createBrowserRouter([
   {
@@ -31,13 +33,14 @@ const router = createBrowserRouter([
             path: ':id', loader: loadCampAndReviews, id: 'campDetail',
             children: [
               { index: true, element: <CampgroundDetails />, action: deleteCamp },
-              { path: 'edit', element: <EditCampground />, action: updateCamp }
+              { path: 'edit', element: <EditCampground />, loader: checkAuthLoader, action: updateCamp }
             ]
           },
-          { path: 'new', element: <NewCampground />, action: updateCamp }
+          { path: 'new', element: <NewCampground />, loader: checkAuthLoader, action: updateCamp }
         ]
       },
-      { path: 'auth', element: <AuthenticationPage /> }
+      { path: 'auth', element: <AuthenticationPage />, action: authAction },
+      { path: 'logout', action: logoutAction }
     ]
   },
 ]);

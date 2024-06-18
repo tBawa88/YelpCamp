@@ -1,5 +1,6 @@
 import { Form, json, redirect, useNavigate, useNavigation } from "react-router-dom";
 import Input from "./Input";
+import { getToken } from "../utils/auth";
 const CampgroundForm = ({ method, camp }) => {
     const naviagte = useNavigate();
     const navigation = useNavigation();
@@ -81,13 +82,15 @@ export const action = async ({ request, params }) => {
         price: parseFloat(data.get('price')),
         description: data.get('description')
     }
-
+    //request to post a new camp must also include Authorization headers now
     try {
+        const token = localStorage.getItem('token');
         const response = await fetch(url, {
             method: request.method,
             body: JSON.stringify(newCamp),
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             }
         });
         const data = await response.json()

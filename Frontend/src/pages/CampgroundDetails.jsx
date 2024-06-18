@@ -2,10 +2,10 @@ import { useRouteLoaderData, redirect, json } from "react-router-dom";
 import CampgroundInfo from "../components/CampgroundInfo";
 
 export const CampgroundDetails = () => {
-    const { camp, reviews } = useRouteLoaderData('campDetail');
+    const { camp, reviews, userId } = useRouteLoaderData('campDetail');
     // console.log("Camp data", camp, "Review data", reviews)
     return <>
-        <CampgroundInfo camp={ camp } reviews={ reviews } />
+        <CampgroundInfo camp={ camp } />
     </>
 }
 
@@ -14,37 +14,26 @@ export const CampgroundDetails = () => {
 export const loader = async ({ request, params }) => {
     try {
         const { id } = params;
+        const token = localStorage.getItem('token') || '';
         const campResponse = await fetch(`http://localhost:3000/camps/${id}`, {
-            method: 'GET'
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
         });
         const reviewResponse = await fetch(`http://localhost:3000/reviews/${id}`, {
             method: 'GET'
         })
+        if (!campResponse.ok)
+            throw json({ title: "Failed to fetch Campground details" })
 
         const campData = await campResponse.json();
+        console.log("campdata received ->>", campData)
         const reviewData = await reviewResponse.json();
-        if (campResponse.ok) {
-            if (campData.success)
-                return { camp: campData.camp, reviews: reviewData.reviews }
-            else
-                throw json({ title: campData.message }, { status: 404 });
-        } else {
-            throw json({ title: "Error while making the fetch request" }, { status: 500 });
-        }
-
-        // if (!campResponse.ok)
-        //     throw json({ title: "Error while making the fetch request" }, { status: 500 });
-        // // const campData = await campResponse.json();
-        // if (!reviewResponse.ok && campResponse.success) { //if failed to make fetch req. for reviews, just send the campground data
-        //     return { camp: campData.camp, reviews: null };
-        // }
-        // if (campData.success || reviewData.success) {
-        //     return { camp: campData, reviews: reviewData.reviews }
-        // }
-
-        // if (campData.success) {
-
-        // } else throw json({ title: campData.message }, { status: 404 });
+        if (campData.success)
+            return { camp: campData.camp, reviews: reviewData.reviews, userId: campData.token.userId }
+        else
+            throw json({ title: campData.message }, { status: 404 });
     } catch (error) {
         console.log("Request Error while finding a single camp", error)
         throw json({ title: "Error while making the fetch request" }, { status: 500 });
@@ -60,11 +49,14 @@ export const action = async ({ request, params }) => {
     const method = request.method;
     const formData = await request.formData();
     let intent = formData.get('intent');
-
+    const token = localStorage.getItem('token') || '';
     if (intent === 'delete-camp') {
         try {
             const response = await fetch(`http://localhost:3000/camps/${campId}`, {
                 method,
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
             })
             if (!response.ok) throw json({ title: "Failed to delete camp" }, { status: 500 })
             const data = await response.json();
@@ -88,7 +80,8 @@ export const action = async ({ request, params }) => {
                 method,
                 body: JSON.stringify(newReview),
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 }
             })
             if (!response.ok) throw json({ title: "Failed to delete camp" }, { status: 500 })
@@ -109,7 +102,8 @@ export const action = async ({ request, params }) => {
                 method: method,
                 body: JSON.stringify({ reviewId }),
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 }
             })
             const data = await response.json();

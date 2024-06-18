@@ -6,8 +6,8 @@ const validateCredentials = (req, res, next) => {
     if (!result.success) {
         const errorsArray = result.error.errors.map(err => err.message);
         console.log("Result of validating the new camp ->", errorsArray);
-        // return res.status(404).json({ success: false, message: "User credentials are invalid", errors: errorsArray });
-        return next(new AuthError('User credentials not valid'))
+        return res.status(404).json({ success: false, message: "User credentials are invalid", errors: errorsArray });
+        // return next(new AuthError('User credentials not valid'))
     }
     next();
 }

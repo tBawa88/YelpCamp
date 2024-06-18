@@ -31,6 +31,7 @@ router.post('/signup', validateCredentials, isUsernameUnique, async (req, res, n
 router.post('/signin', validateSignIn, async (req, res, next) => {
     try {
         const { username, password } = req.body;
+        console.log("inside signin route, user", req.body)
         const existingUser = await UserModel.findOne({ username });
         if (!existingUser)
             return next(new AuthError("Invalid credentials"))

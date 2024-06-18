@@ -4,17 +4,19 @@ import { useRef } from "react";
 const ReviewForm = () => {
     const submit = useSubmit();
     const ratingRef = useRef();
-    const reviewRef = useRef();
+    const contentRef = useRef();
 
     const handleClick = () => {
+        if (contentRef.current.value === '' || contentRef.current.value.length < 4)
+            return;
         const data = {
             intent: 'create-review',
-            content: reviewRef.current.value,
+            content: contentRef.current.value,
             rating: parseFloat(ratingRef.current.value)
         }
         submit(data, { method: 'POST' });
         ratingRef.current.value = '0'
-        reviewRef.current.value = ''
+        contentRef.current.value = ''
     }
 
     return <>
@@ -26,7 +28,7 @@ const ReviewForm = () => {
                 </div>
                 <div className="mb-3">
                     <label htmlFor="review">Review</label>
-                    <textarea type="text" className="form-control" name="content" rows='3' ref={ reviewRef } />
+                    <textarea type="text" className="form-control" name="content" rows='3' ref={ contentRef } />
                 </div>
 
                 <button
